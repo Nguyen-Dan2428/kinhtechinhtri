@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinh tế thị trường định hướng XHCN</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #000000, #0a0a0a);
+            color: white;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: min(1200px, 95vw);
+            max-width: 100%;
+            padding: 20px 10px 50px 10px;
+            text-align: center;
+        }
+        .title {
+            font-size: clamp(28px, 5vw, 40px);
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+        .title span {
+            display: block;
+            white-space: normal;
+            background: linear-gradient(180deg, #ffffff, #4facfe, #ffffff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 4s ease infinite;
+            word-break: break-word;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 50% 0%; }
+            50% { background-position: 50% 100%; }
+            100% { background-position: 50% 0%; }
+        }
+        .subtitle {
+            font-size: clamp(16px, 3vw, 18px);
+            margin-top: 6px;
+            margin-bottom: 6px;
+        }
+        .note {
+            font-size: clamp(12px, 2.5vw, 12px);
+            opacity: 0.6;
+            margin-bottom: 20px;
+        }
+        .button-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: clamp(12px, 3vw, 16px);
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 25px;
+            padding: clamp(25px, 4vw, 40px);
+            backdrop-filter: blur(25px);
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            margin-left:auto;margin-right:auto;
+        }
+        .slider-row {
+            margin-bottom: 20px;
+        }
+        .slider-label {
+            font-size: clamp(16px, 3vw, 18px);
+            margin-bottom: 8px;
+        }
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: nowrap;
+        }
+        .slider-controls button {
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+            padding: 0;
+        }
+        .slider-controls input[type="range"] {
+            width: 200px;
+            min-width: 150px;
+        }
+        .slider-controls span {
+            width: 25px;
+            display: inline-block;
+            text-align: center;
+        }
+        .section {
+            display: none;
+        }
+        .option-row {
+            margin-top: 10px;
+            display:flex;
+            justify-content:center;
+            gap:5px;
+            flex-wrap:wrap;
+        }
+        .option-btn {
+            padding:10px;
+            border-radius:10px;
+            background: rgba(255,255,255,0.1);
+            border:none;
+            cursor:pointer;
+            color:white;
+        }
+        .explain {
+            text-align:left;
+            margin-top:10px;
+            padding:10px;
+            background:rgba(255,255,255,0.05);
+            border-radius:10px;
+        }
+        /* Tooltip CSS */
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+            max-width: 200px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="title">
+        <span>Kinh tế thị trường định hướng</span>
+        <span>Xã hội chủ nghĩa ở Việt Nam</span>
+    </h1>
+    <p class="subtitle">Mô phỏng giả định và trò chơi chính sách</p>
+    <p class="note">Nội dung minh họa, không chính xác tuyệt đối và không cổ xúy quan điểm.</p>
+    <div class="button-row">
+        <button onclick="showSection('sim')">📊 Mô phỏng</button>
+        <button onclick="resetAndShowGame()">🎮 Trò chơi</button>
+    </div>
+
+    <!-- SIM -->
+    <div id="sim" class="section card">
+        <h2>Mô phỏng</h2>
+        <div class="slider-row">
+            <div class="slider-label"> Lợi nhuận <span id="profitIcon" style="cursor: pointer;">💰</span>
+                <span id="profitTooltip" class="tooltip">Lợi nhuận biểu thị mức độ hiệu quả tài chính của doanh nghiệp, nhưng không thể đặt nặng quá mức, vì nó có thể ảnh hưởng đến phúc lợi xã hội.</span>
+            </div>
+            <div class="slider-controls">
+                <button onclick="changeValue('profit',-1)">−</button>
+                <input type="range" min="0" max="100" id="profit" value="50">
+                <button onclick="changeValue('profit',1)">+</button>
+                <span id="profitVal">50</span>
+            </div>
+        </div>
+
+        <div class="slider-row">
+            <div class="slider-label"> Việc làm <span id="employmentIcon" style="cursor: pointer;">👷</span>
+                <span id="employmentTooltip" class="tooltip">Việc làm thể hiện mức độ ổn định trong nền kinh tế, giúp giảm thất nghiệp và cải thiện đời sống xã hội.</span>
+            </div>
+            <div class="slider-controls">
+                <button onclick="changeValue('employment',-1)">−</button>
+                <input type="range" min="0" max="100" id="employment" value="50">
+                <button onclick="changeValue('employment',1)">+</button>
+                <span id="employmentVal">50</span>
+            </div>
+        </div>
+
+        <div class="slider-row">
+            <div class="slider-label"> Phúc lợi <span id="welfareIcon" style="cursor: pointer;">😊</span>
+                <span id="welfareTooltip" class="tooltip">Phúc lợi là chỉ số phản ánh sự phát triển bền vững của xã hội, giúp nâng cao chất lượng cuộc sống và bảo vệ quyền lợi cộng đồng.</span>
+            </div>
+            <div class="slider-controls">
+                <button onclick="changeValue('welfare',-1)">−</button>
+                <input type="range" min="0" max="100" id="welfare" value="50">
+                <button onclick="changeValue('welfare',1)">+</button>
+                <span id="welfareVal">50</span>
+            </div>
+        </div>
+
+        <div class="slider-row">
+            <div class="slider-label"> Tuân thủ chính sách <span id="complianceIcon" style="cursor: pointer;">⚖️</span>
+                <span id="complianceTooltip" class="tooltip">Tuân thủ chính sách giúp duy trì trật tự xã hội, đảm bảo các quy định pháp lý và thúc đẩy phát triển nền kinh tế.</span>
+            </div>
+            <div class="slider-controls">
+                <button onclick="changeValue('compliance',-1)">−</button>
+                <input type="range" min="0" max="100" id="compliance" value="50">
+                <button onclick="changeValue('compliance',1)">+</button>
+                <span id="complianceVal">50</span>
+            </div>
+        </div>
+
+        <button onclick="calculate()">Tính</button>
+        <div id="simResult"></div>
+        <button onclick="resetSim()" style="display:none; font-size:14px; margin-top:8px;">🔄 Reset</button>
+    </div>
+
+    <!-- GAME -->
+    <div id="game" class="section card">
+        <h2>Game doanh nghiệp</h2>
+        <div id="question"></div>
+        <div id="gameResult"></div>
+    </div>
+</div>
+
+<script>
+    // Show tooltip when mouse enters the 💰 icon
+    document.getElementById("profitIcon").addEventListener("mouseenter", function() {
+        document.getElementById("profitTooltip").style.display = "block"; // Show tooltip
+    });
+    document.getElementById("profitIcon").addEventListener("mouseleave", function() {
+        document.getElementById("profitTooltip").style.display = "none"; // Hide tooltip
+    });
+
+    // Show tooltip when mouse enters the 👷 icon
+    document.getElementById("employmentIcon").addEventListener("mouseenter", function() {
+        document.getElementById("employmentTooltip").style.display = "block"; // Show tooltip
+    });
+    document.getElementById("employmentIcon").addEventListener("mouseleave", function() {
+        document.getElementById("employmentTooltip").style.display = "none"; // Hide tooltip
+    });
+
+    // Show tooltip when mouse enters the 😊 icon
+    document.getElementById("welfareIcon").addEventListener("mouseenter", function() {
+        document.getElementById("welfareTooltip").style.display = "block"; // Show tooltip
+    });
+    document.getElementById("welfareIcon").addEventListener("mouseleave", function() {
+        document.getElementById("welfareTooltip").style.display = "none"; // Hide tooltip
+    });
+
+    // Show tooltip when mouse enters the ⚖️ icon
+    document.getElementById("complianceIcon").addEventListener("mouseenter", function() {
+        document.getElementById("complianceTooltip").style.display = "block"; // Show tooltip
+    });
+    document.getElementById("complianceIcon").addEventListener("mouseleave", function() {
+        document.getElementById("complianceTooltip").style.display = "none"; // Hide tooltip
+    });
+
+    function showSection(id) {
+        document.getElementById('sim').style.display='none';
+        document.getElementById('game').style.display='none';
+        document.getElementById(id).style.display='block';
+    }
+
+    function changeValue(id, delta) {
+        let input = document.getElementById(id);
+        let newVal = parseInt(input.value) + delta;
+        if (newVal < parseInt(input.min)) newVal = parseInt(input.min);
+        if (newVal > parseInt(input.max)) newVal = parseInt(input.max);
+        input.value = newVal;
+        document.getElementById(id + 'Val').textContent = newVal;
+    }
+
+    function calculate() {
+        let P = +document.getElementById("profit").value;
+        let E = +document.getElementById("employment").value;
+        let W = +document.getElementById("welfare").value;
+        let C = +document.getElementById("compliance").value;
+
+        // Trọng số theo lý thuyết Mác-Lênin
+        let avg = P * 0.15 + E * 0.35 + W * 0.35 + C * 0.15;
+
+        // Điều chỉnh mức tối đa hợp lý cho các yếu tố
+        if (P > 80) P = 80;  // Lợi nhuận không thể quá 80
+        if (E > 90) E = 90;  // Việc làm nếu quá 90 có thể gây lạm phát
+        if (W > 90) W = 90;  // Phúc lợi tăng mà không kèm nguồn lực phát triển bền vững sẽ mất cân bằng
+        if (C > 85) C = 85;  // Tuân thủ chính sách vượt mức quá cao dễ gây kìm hãm đổi mới
+
+        avg = P * 0.15 + E * 0.35 + W * 0.35 + C * 0.15;
+
+        let resultText = `<h3>Kết quả:</h3>
+        <p>📊 Lợi nhuận: ${P}/80</p>
+        <p>👷 Việc làm: ${E}/90</p>
+        <p>😊 Phúc lợi: ${W}/90</p>
+        <p>⚖️ Tuân thủ chính sách: ${C}/85</p>`;
+
+        let conclusion = "";
+        if (avg >= 75) conclusion = "🏛️ Nhà nước phát triển ổn định, hiệu quả bền vững!";
+        else if (avg >= 50) conclusion = "⚖️ Nhà nước cần điều chỉnh các yếu tố để phát triển tốt hơn.";
+        else conclusion = "❗ Nhà nước mất cân bằng, cần cải thiện chiến lược kinh tế và chính sách.";
+
+        resultText += `<p style="margin-top:10px; font-weight:bold;">Kết luận: ${conclusion}</p>`;
+        document.getElementById("simResult").innerHTML = resultText;
+        document.querySelector("#sim button[onclick='calculate()']").style.display = "none";
+        document.querySelector("#sim button[onclick='resetSim()']").style.display = "inline-block";
+    }
+
+    function resetSim() {
+        ['profit', 'employment', 'welfare', 'compliance'].forEach(id => {
+            document.getElementById(id).value = 50;
+            document.getElementById(id + 'Val').textContent = 50;
+        });
+        document.getElementById("simResult").innerHTML = "";
+        document.querySelector("#sim button[onclick='calculate()']").style.display = "inline-block";
+        document.querySelector("#sim button[onclick='resetSim()']").style.display = "none";
+    }
+
+    /* ===== GAME ===== */
+    let questions = [
+        {
+            q: "Nhà nước tăng thuế doanh nghiệp",
+            options: ["Giảm lương", "Tăng giá sản phẩm", "Đóng cửa"],
+            effect: [-10, -5, -50],
+            explain: "Tăng giá giúp bù chi phí nhưng ảnh hưởng thị trường.",
+            correct: 1 // Câu trả lời đúng là Tăng giá sản phẩm
+        },
+        {
+            q: "Nhà nước trợ cấp sản xuất",
+            options: ["Mở rộng sản xuất", "Giữ nguyên", "Sa thải lao động"],
+            effect: [20, 5, -10],
+            explain: "Mở rộng sản xuất giúp tăng trưởng và việc làm.",
+            correct: 0 // Câu trả lời đúng là Mở rộng sản xuất
+        },
+        {
+            q: "Luật môi trường siết chặt",
+            options: ["Đầu tư công nghệ sạch", "Lách luật", "Giảm sản xuất"],
+            effect: [10, -30, -5],
+            explain: "Đầu tư công nghệ sạch giúp phát triển bền vững.",
+            correct: 0 // Câu trả lời đúng là Đầu tư công nghệ sạch
+        }
+    ];
+
+    let current = 0;
+    let score = 50;
+
+    function loadQuestion() {
+        let q = questions[current];
+        document.getElementById("question").innerHTML = `<b>${q.q}</b>
+        <div class="option-row">
+            <button class="option-btn" onclick="answer(0)">A. ${q.options[0]}</button>
+            <button class="option-btn" onclick="answer(1)">B. ${q.options[1]}</button>
+            <button class="option-btn" onclick="answer(2)">C. ${q.options[2]}</button>
+        </div>`;
+    }
+
+    function answer(i) {
+        let q = questions[current];
+        if (i === q.correct) {
+            score = 100;  // Đúng câu trả lời, cộng 100 điểm
+        } else {
+            score = 0;    // Sai câu trả lời, mất hết điểm
+        }
+        current++;
+        if (current < questions.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        let result = "";
+        if (score === 100) result = "Tối ưu tuyệt đối! 🌱";
+        else if (score > 0) result = "Phát triển tốt 🌱";
+        else result = "Mất cân bằng ❗";
+
+        document.getElementById("question").innerHTML = "";
+        document.getElementById("gameResult").innerHTML = `<h3>Điểm: ${score}</h3>
+        <p>${result}</p>
+        <button onclick="toggleExplain()">💡 Hướng dẫn</button>
+        <div id="explainBox" style="display:none;"></div>
+        <button onclick="restartGame()" style="margin-top:10px;">🔄 Reset</button>`;
+    }
+
+    function toggleExplain() {
+        let box = document.getElementById("explainBox");
+        if (box.style.display === "none") {
+            box.style.display = "block";
+            let html = questions.map((q, i) => `
+                <div class="explain">
+                    <b>Câu ${i + 1}: ${q.q}</b><br>
+                    💡 ${q.explain}
+                </div>`).join('');
+            box.innerHTML = html;
+        } else {
+            box.style.display = "none";
+        }
+    }
+
+    function restartGame() {
+        current = 0;
+        score = 50;
+        document.getElementById("gameResult").innerHTML = "";
+        loadQuestion();
+    }
+
+    function resetAndShowGame() {
+        restartGame();
+        showSection('game');
+    }
+
+    loadQuestion();
+</script>
+</body>
+</html>
